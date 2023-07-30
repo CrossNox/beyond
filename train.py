@@ -10,6 +10,7 @@ from PIL import Image
 from torch import nn, optim
 from torch.autograd import Variable
 from torchvision import transforms
+from tqdm.autonotebook import tqdm
 
 
 def write_file_and_close(filename, *arg, flag="a"):
@@ -122,22 +123,22 @@ def train_epoch(
     total_ctr = 0
     for g in optimizer.param_groups:
         g["lr"] = lr_control(control_dict, it)
-    for i, data in enumerate(trainloader):
+    for i, data in tqdm(enumerate(trainloader)):
         info = [0.0, 0]
         train(data, info)
         running_loss_sum += info[0]
         total_loss_sum += info[0]
         ctr_sum += 1
         total_ctr += info[1]
-        if (i + 1) % 100 == 0:
-            write_file_and_close(
-                global_output_filename,
-                "epoch: {:d}, "
-                "train set index: {:d}, "
-                "average loss: {:.10f}".format(it, i, running_loss_sum / ctr_sum),
-            )
-            running_loss_sum = 0.0
-            ctr_sum = 0
+        # if (i + 1) % 100 == 0:
+        #    write_file_and_close(
+        #        global_output_filename,
+        #        "epoch: {:d}, "
+        #        "train set index: {:d}, "
+        #        "average loss: {:.10f}".format(it, i, running_loss_sum / ctr_sum),
+        #    )
+        #    running_loss_sum = 0.0
+        #    ctr_sum = 0
         # it = it + 1
     write_file_and_close(
         global_output_filename,
