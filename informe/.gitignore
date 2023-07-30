@@ -1,0 +1,8 @@
+*.pdf
+*.log
+*.fls
+*.synctex.gz
+*.fdb_latexmk
+*.aux
+_minted-informe/
+*.out
