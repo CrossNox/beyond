@@ -3,9 +3,7 @@ import math
 import torch
 from torch import nn
 
-from .blocks import Downsample
-
-# from init import *
+from blocks import Downsample
 
 
 class MResNet(nn.Module):
@@ -113,10 +111,9 @@ class MResNet(nn.Module):
                     residual = self.downsample31(x)
                     # if not self.pretrain:
                     # last_residual=self.downsample32(last_residual)
-                x = b(x)
+                x = b(x) + residual
                 # print(x.size())
                 # print(residual.size())
-                x += residual
 
             elif self.pretrain:
                 x = b(x) + residual
