@@ -366,6 +366,8 @@ Para los resultados experimentales, se toma como verdad el código. Por tanto, d
 \section{Resultados experimentales}
 En esta sección se detallan los resultados de distintos experimentos desarrollados a fin de replicar los resultados expuestos en el paper. A estos efectos, se utiliza el código original y se arma un pipeline de entrenamiento acorde a lo relatado en el paper.
 
+El código utilizado para obtener estos resultados está disponible en \url{https://github.com/CrossNox/beyond}.
+
 \subsection{CIFAR10}
 Los experimentos aquí detallados se realizan utilizando el dataset CIFAR10. Este dataset se compone de 60000 imágenes de 32x32 píxeles con tres canales de color (RGB). Se divide en 50000 imágenes de entrenamiento y 10000 para el set de pruebas.
 
@@ -405,8 +407,8 @@ Todos los experimentos fueron llevados a cabo con CUDA 12.1 en una GPU Nvidia 20
 \multicolumn{1}{|l|}{\textbf{MResNet-110}} & 0.9350 & 6.5 & 0.9384 & 6.16 & \multicolumn{1}{l|}{\cellcolor[HTML]{FF6961}-0.34} & \multicolumn{1}{l|}{1731760} & 32.40 \\
 \multicolumn{1}{|l|}{\textbf{MResNet-164}} & 0.9474 & 5.26 & 0.9473 & 5.27 & \multicolumn{1}{l|}{\cellcolor[HTML]{77DD77}+0.1} & \multicolumn{1}{l|}{1703760} & 31.70 \\ \hline
 \end{tabular}
-\caption{Tabla de resumen de resultados obtenidos.}
 \end{adjustbox}
+\caption{Tabla de resumen de resultados obtenidos.}
 \end{table}
 
 
@@ -434,22 +436,60 @@ TODO Diferencia hiperparametros
 \end{figure}
 
 \section{Sistemas dinámicos estocásticos}
-En \cite{huang2016deep}, se propone, aleatoriamente eliminar un subset de capas y reemplazarlas por la función identidad. Se inicia con una red extremadamente profunda (incluso más de 1200 capas) para luego ir eliminando en entrenamiento. Por otro lado, \cite{gastaldi2017shakeshake} propone utilizar regularización shake-shake para mejorar los resultados de una red con múltiples ramas (como LM-Resnet), reemplazando la operación de suma como unión de ramas por una operación afín estocástica.
+En \cite{huang2016deep}, se propone, aleatoriamente eliminar un subset de capas y reemplazarlas por la función identidad. Se inicia con una red extremadamente profunda (incluso más de 1200 capas) para luego ir eliminando algunas durante cada epoch de entrenamiento. Por otro lado, \cite{gastaldi2017shakeshake} propone utilizar regularización shake-shake para mejorar los resultados de una red con múltiples ramas (como LM-Resnet), reemplazando la operación de suma como unión de ramas por una operación afín estocástica.
 
 \subsection{Sistema dinámico de una regularización Shake-Shake}
-Tal se adelantó, en \cite{gastaldi2017shakeshake},
+Tal como se adelantó, en \cite{gastaldi2017shakeshake} se propone la siguiente combinación afin estocástica:
 
 \begin{align}
 	X_{n+1} = X_n + \eta f_1(X_n) + (1-\eta) f_2 (X_n)
 \end{align}
 
-Describe la combinación afín estocástica de múltiples componentes de un bloque residual introducida. $\eta \sim \mathscr{U}(0,1)$. Introduciendo un paso temporal $\Delta t$ encontramos su sistema dinamico estocástico:
+Como operador de unión de múltiples componentes de un bloque residual. $\eta \sim \mathscr{U}(0,1)$. Introduciendo un paso temporal $\Delta t$ encontramos su sistema dinamico estocástico:
 
-\begin{align}
+\begin{align}\label{shakeshake_step}
 	X_{n+1} = X_n + \left(\dfrac{\Delta t}{2} + \sqrt{\Delta t}(\eta - \dfrac{1}{2})\right) f_1(X_n) + \left( \dfrac{\Delta t}{2} + \sqrt{\Delta t} (\dfrac{1}{2} - \eta) \right) f_2(X_n)
 \end{align}
 
-Cuando $\Delta t \equiv 1$, la ecuación anterior se reduce a la regularización shake-shake. Podemos reescribir la
+Cuando $\Delta t \equiv 1$, la ecuación anterior se reduce a la regularización shake-shake. Cuando se elige $\Delta t \neq 1$, entonces se tienen alternativas a la regularizacion shake-shake. En el paper se deriva, desde \ref{shakeshake_step}, que la red correspondiente a la regularización shake-shake es una aproximación débil del siguiente sistema dinámico estocástico:
+
+\begin{align}
+	dX &= \dfrac{1}{2} (f_1(X) + f_2(X)) dt\\
+	   &+ \dfrac{1}{\sqrt{12}} (f_1(X) - f_2(X)) \odot \left[ \mathbb{1}_{N\times 1}, \mathbb{0}_{N,N-1} \right] dB_t
+\end{align}
+
+Donde $dB_t$ es un vector de $N$ dimensiones de movimiento Browniano.
+
+\subsection{Profundidad estocástica}
+En \cite{huang2016deep}, como se adelantó, se propone eliminar bloques residuales aleatoriamente durante entrenamiento. Esto obedece a varios objetivos. En primer lugar, reducir el tiempo de entrenamiento. En segundo lugar, mejorar la robustez de la red. Es decir, actúa como método de regularización.
+
+El paso hacia adelante de propagación de gradientes se vería como:
+
+\begin{align}
+	X_{n+1} = X_n + \eta_n f(X_n)
+\end{align}
+
+Donde $\mathbb{P}(\eta_n = 1) = p_n, \mathbb{P}(\eta_n = 0) = 1 - p_n$. Al introducir un paso temporal $\Delta t \equiv 1$, se deriva que la red con dropout estocástico se reduce a una aproximación débil del sistema estocástico dinámico
+
+\begin{align}
+	dX = p(t) f(X) dt + \sqrt{p(t) (1-p(t))} f(X) \odot [\mathbb{1}_{N \times 1}, \mathbb{0}_{N, N - 1}] dB_t
+\end{align}
+
+\subsection{Entrenamiento estocástico para LM-ResNet}
+En el paper se deriva la siguiente estrategia estocástica de entrenamiento para la arquitectura LM:
+
+\begin{align}
+	X_{n+1} = (2 + g_n) X_n - (1 + g_n) x_{n-1} + \eta_n f(X_n)
+\end{align}
+
+Donde $\mathbb{P}(\eta_n = 1) = p_n, \mathbb{P}(\eta_n = 0) = 1 - p_n$. Lo cual indicaría que se puede implementar simplemente eliminando el bloque residual con probabilidad $p$.
+
+\subsection{Resultados experimentales}
+\subsubsection{Hiperparámetros}
+El dataset se trata del mismo modo que para experimentos anteriores. En este caso, la probabilidad de eliminar un bloque residual en cada capa es un funcion lineal de la capa. Siendo $l$ la capa bajo consideración, la probabilidad de eliminar un bloque residual es $\dfrac{l}{L}(1 - p_L)$, donde $L$ refiere a la profundidad de la red y $p_L$ es la probabilidad asociada a la capa anterior a $l$.
+
+Para LM-ResNet56 se selecciona $p_L = 0.8$ y para LM-ResNet110 se selecciona $p_L = 0.5$. Se entrena utilizando descenso estocástico por gradiente con decaimiento de peso de 0.0001 y momento de 0.9. El factor de aprendizaje arranca en 0.1, pasa a ser 0.01 luego del epoch 250 y 0.001 luego del epoch 375. El entrenamiento termina a los 500 epochs.
+
 
 \section{Conclusión}
 En el presente trabajo se explica el paper ``Beyond Finite Layer Neural Networks'', explicando el estado del arte previo, su motivación y los temas más relevantes de la literatura relacionada. Se implementan los pipelines de entrenamientos necesarios para replicar los resultados, reportamos la diferencia obtenida respecto de los resultados reportados en el paper. Se hacen notar varios problemas en el paper original y el código.
