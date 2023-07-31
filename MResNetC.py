@@ -4,9 +4,7 @@ import torch
 from torch import nn
 from torch.autograd import Variable
 
-from .blocks import Downsample
-
-# from init import *
+from blocks import Downsample
 
 
 class MResNetC(nn.Module):
@@ -98,9 +96,10 @@ class MResNetC(nn.Module):
             else:
                 x = (
                     b(x)
-                    + self.ks[i].expand_as(residual) * residual
-                    + (1 - self.ks[i]).expand_as(last_residual) * last_residual
+                    + (1 - self.ks[i]).expand_as(residual) * residual
+                    + self.ks[i].expand_as(last_residual) * last_residual
                 )
+
             last_residual = residual
             if self.training and self.noise:
                 x += Variable(

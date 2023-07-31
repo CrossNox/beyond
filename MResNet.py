@@ -27,7 +27,7 @@ class MResNet(nn.Module):
         self.pretrain = pretrain
         self.ks = nn.ParameterList(
             [
-                nn.Parameter(torch.Tensor(1).uniform_(1.0, 1.1))
+                nn.Parameter(torch.Tensor(1).uniform_(-0.1, 0))
                 for i in range(layers[0] + layers[1] + layers[2])
             ]
         )
@@ -118,10 +118,15 @@ class MResNet(nn.Module):
             elif self.pretrain:
                 x = b(x) + residual
             else:
+                # x = (
+                #    b(x)
+                #    + self.ks[i].expand_as(residual) * residual
+                #    + (1 - self.ks[i]).expand_as(last_residual) * last_residual
+                # )
                 x = (
                     b(x)
-                    + self.ks[i].expand_as(residual) * residual
-                    + (1 - self.ks[i]).expand_as(last_residual) * last_residual
+                    + (1 - self.ks[i]).expand_as(residual) * residual
+                    + self.ks[i].expand_as(last_residual) * last_residual
                 )
 
             last_residual = residual
