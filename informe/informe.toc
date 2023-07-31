@@ -9,7 +9,7 @@
 \contentsline {subsection}{\numberline {2.1}LM-ResNet}{8}{subsection.2.1}%
 \contentsline {subsubsection}{\numberline {2.1.1}Métodos multipasos}{8}{subsubsection.2.1.1}%
 \contentsline {subsubsection}{\numberline {2.1.2}Formulación de LM-ResNet}{9}{subsubsection.2.1.2}%
-\contentsline {section}{\numberline {3}Resultados experimentales}{9}{section.3}%
+\contentsline {section}{\numberline {3}Resultados experimentales}{10}{section.3}%
 \contentsline {subsection}{\numberline {3.1}CIFAR10}{10}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Hiperparámetros relevantes}{10}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Resultados}{11}{subsection.3.3}%

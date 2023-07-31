@@ -49,20 +49,20 @@ height=21cm,top=1.7cm,headsep=1cm, headheight=1.6cm, footskip=1.2cm, bottom=1.4c
 \newpage
 
 \section{Introducción}
-En el presente trabajo se hará una Introducción al paper \textit{Beyond Finite Layer Neural Networks: Bridging Deep Architectures and Numerical Differential Equations}\cite{lu18d} de \textit{Lu et. al}.  Se introduce la motivación de los autores, una breve reseña de la literatura para explicar el estado del arte en el momento de publicación, se explican los puntos principales del paper y mostramos los resultados obtenidos al intentar replicar los resultados obtenidos en el paper.
+En el presente trabajo se apunta a explicar el paper \textit{Beyond Finite Layer Neural Networks: Bridging Deep Architectures and Numerical Differential Equations}\cite{lu18d} de \textit{Lu et. al}.  Se introduce la motivación de los autores, una breve reseña de la literatura para explicar el estado del arte en el momento de publicación, se explican los puntos principales del paper y mostramos los resultados obtenidos al intentar replicar los resultados obtenidos en el paper.
 
 \subsection{Entrenamiento de redes neuronales muy profundas}
 Las redes neuronales convolucionales empezaron a dominar el campo de vision por computadora luego de la introducción de AlexNet \cite{DBLP:journals/corr/Krizhevsky14} en 2012. Una gran ventaja de esta familia de modelos es que aprenden mapas de \textit{features} junto con un clasificador en un proceso punta a punta. De este modo, no es necesario que se definan a priori las \textit{features} relevantes de la imagen o del dominio bajo estudio.
 
 Desde entonces, se ha acelerado el estudio de estas familias de modelos, con aplicaciones varias en imágenes, lenguaje natural, sonido, procesamiento de señales, sistemas de recomendaciones, entre otras. Distintos papers elaboran sobre la importancia de la profundidad de dichas redes para lograr mejores resultados. Es decir, la performance, bajo alguna medida de performance relevante al problema, aumenta al agregar capas de parámetros libres o bloques con más neuronas. Sin embargo, el entrenamiento de modelos cada vez más grandes ha expuesto varios problemas relacionados a la convergencia del entrenamiento.
 
-Un problema común a la hora de entrenar redes neuronales muy profundas es la explosión de gradientes, otro es el desvanecimiento de gradientes. El primero se refiere a que los valores de los gradientes a medida que se propagan por la red toman valores exponencialmente más grandes, hasta tomar el valor nan. De este valor, no se pueden recuperar, dado que las operaciones de matmul no se encuentran definidas. El segundo se refiere al caso contrario, donde los gradientes se vuelven progresivamente más pequeños y tienden a cero, frenando por completo el entrenamiento. En ambos casos, la convergencia de la red se ve afectada. Ambos problemas se hacen más aparentes en redes neuronales muy profundas. Estos problemas han sido, a grandes rasgos, resueltos mediante el uso de distintos métodos de regularización entre capas así como de inicialización normalizada.
+Dos problemas comunes a la hora de entrenar redes neuronales muy profundas es la explosión de gradientes y el desvanecimiento de gradientes. El primero se refiere a que los valores de los gradientes a medida que se propagan por la red toman valores exponencialmente más grandes, hasta tomar el valor \texttt{NaN}. De este valor, no se pueden recuperar, dado que las operaciones de matmul no se encuentran definidas. El segundo se refiere al caso contrario, donde los gradientes se vuelven progresivamente más pequeños y tienden a cero, frenando por completo el entrenamiento. En ambos casos, la convergencia de la red se ve afectada. Ambos problemas se hacen más aparentes en redes neuronales muy profundas. Estos problemas han sido, a grandes rasgos, resueltos mediante el uso de distintos métodos de regularización entre capas así como mediante inicialización normalizada de los parámetros de la red.
 
-Sin embargo, aún convergiendo, una consecuencia de aumentar la profundidad de las redes, es que se evidencia una degradación en el error de aprendizaje. La precisión de la red se satura y luego empeora. Sería natural que se trata de un caso de sobreajuste u \textit{overfitting}, pero no es el caso.
+Sin embargo, aún convergiendo, una consecuencia de aumentar la profundidad de las redes, es que se evidencia una degradación en el error de aprendizaje: la precisión de la red se satura y luego empeora al intentar agregar más capas. Sería natural pensar que se trata de un caso de sobreajuste u \textit{overfitting}, pero no es el caso.
 
 
 \subsection{Redes residuales}
-Dentro de la literatura que trata de ajustar este problema, \cite{DBLP:journals/corr/HeZRS15} propone lo que denomina aprendizaje de residuos para resolver el problema de degradación. En esta sección hago un breve resumen de \S 1 del paper de ResNet a fin de proveer el contexto necesario para el resto de esta monografía.
+Dentro de la literatura que trata de resolver este problema, \cite{DBLP:journals/corr/HeZRS15} propone lo que denomina aprendizaje de residuos para resolver el problema de degradación. En esta sección hago un breve resumen de \S 1 del paper de ResNet a fin de proveer el contexto necesario para el resto de esta monografía.
 
 \begin{figure}[H]
 \centering
@@ -75,7 +75,7 @@ La segunda CNN en \ref{ex_cnn} posee una capa mas de conv-maxpooling que la prim
 
 En lugar de esperar que algún conjunto de capas aprendan un mapeo deseado, se les hace aprender un mapeo residual: deseando aprender el mapeo $\mathscr{H}(x)$, dejan que ese conjunto no lineal de capas aprenda $\mathscr{F}(x) = \mathscr{H}(x) - x$, de modo de obtener la función original como $\mathscr{F}(x) + x$. Los autores conjeturan que es más fácil optimizar el mapeo residual que el mapeo original. Volviendo a nuestro argumento de construcción, si el mapeo identidad fuera óptimo, sería más facil llevar el residual a cero que aprender $\mathscr{H}(x)$ como un mapeo de identidad.
 
-Dicha formulación puede ser expresada como conexiones entre capas no contiguas de una red neuronal. ResNet utiliza mapeos identidad como conexiones de "atajo" entre capas (\ref{resnet_block}), dado que no introducen costo computacional extra ni agregan parámetros libres a la red. La salida de estas conexiones simplemente se suma a la salida de la capa. De este modo, se puede optimizar por backpropagation. En \ref{resnet_torch} se ilustra su implementación utilizando \texttt{pytorch}.
+Dicha formulación puede ser expresada como conexiones entre capas no contiguas de una red neuronal \cite{srivastava2015highway}. ResNet utiliza mapeos identidad como conexiones de "atajo" entre capas (\ref{resnet_block}), dado que no introducen costo computacional extra ni agregan parámetros libres a la red. La salida de estas conexiones simplemente se suma a la salida de la capa. De este modo, se puede optimizar por backpropagation. En \ref{resnet_torch} se ilustra su implementación utilizando \texttt{pytorch}.
 
 \begin{figure}[H]
 \centering
@@ -171,7 +171,7 @@ Observemos, brevemente, que cada bloque residual de ResNet puede ser descrito po
 	y_{l+1} &= g(y_l)
 \end{align}
 
-Donde $z_l$ es la entrada del l-ésima capa, $z_{l+1}$ es la salida de la l-ésima capa, $y_l$ es una variable auxiliar de la l-ésima capa, $h, g$ son mapeos que pueden ser no-lineales. El entrenamiento, experimentalemente, se determina \cite{he2016identity} que es más facil si sendos $g$ y $h$ son el mapa identidad.
+Donde $z_l$ es la entrada del l-ésima capa, $z_{l+1}$ es la salida de la l-ésima capa, $y_l$ es una variable auxiliar de la l-ésima capa, $h, g$ son mapeos que pueden ser no-lineales. El entrenamiento se determina experimentalemente \cite{he2016identity} que es más facil si sendos $g$ y $h$ son el mapa identidad.
 
 Consideremos $G$ como la inversa de $g$, entonces el sistema dinamico anterior puede ser descrito como
 
@@ -346,7 +346,7 @@ Donde $k_n \in \mathbb{R}^n$ es un paramétro entrenable de cada capa que actúa
 \begin{figure}[H]
 \centering
 \includegraphics[height=200px]{images/LM-Block.png}
-\caption{Bloque de LM-ResNet}
+\caption{Bloque de LM-ResNet, acorde al código original.}
 \label{lmblock}
 \end{figure}
 
@@ -357,21 +357,29 @@ Donde $k_n \in \mathbb{R}^n$ es un paramétro entrenable de cada capa que actúa
 \label{lmblockorig}
 \end{figure}
 
-Para los resultados experimentales, se toma como verdad el código. Por tanto, debemos modificar \ref{LM_arch} acordemente como:
+Para los resultados experimentales, se toma como verdad la ecuación \ref{LM_arch}. De otro modo, deberíamos modificar \ref{LM_arch} como:
 
 \begin{align}
 	u_{n+1} = f_n(u_n) + k_n \times u_n + (1-k_n) \times u_{n-1}
 \end{align}
 
 \section{Resultados experimentales}
-En esta sección se detallan los resultados de distintos experimentos desarrollados a fin de replicar los resultados expuestos en el paper. A estos efectos, se utiliza el código original y se arma un pipeline de entrenamiento acorde a lo relatado en el paper.
+En esta sección se detallan los resultados de distintos experimentos desarrollados a fin de replicar los resultados expuestos en el paper. A estos efectos, se utiliza el código original\footnote{Tomado de \url{https://github.com/2prime/LM-ResNet}} y se arma un pipeline de entrenamiento acorde a lo relatado en el paper.
 
-El código utilizado para obtener estos resultados está disponible en \url{https://github.com/CrossNox/beyond}.
+El código utilizado para obtener estos resultados está disponible en \url{https://github.com/CrossNox/beyond}. Los aportes hechos en este repositorio son:
+
+\begin{itemize}
+	\item Corrección del bug antes mencionado
+	\item Mejoras varias al código, incluyendo aquellas para reducir el impacto en memoria de entrenamiento
+	\item Modularización del código
+	\item Armado de notebooks para entrenar modelos
+	\item Armado de notebooks para realizar los gráficos resultantes del entrenamiento
+\end{itemize}
 
 \subsection{CIFAR10}
 Los experimentos aquí detallados se realizan utilizando el dataset CIFAR10. Este dataset se compone de 60000 imágenes de 32x32 píxeles con tres canales de color (RGB). Se divide en 50000 imágenes de entrenamiento y 10000 para el set de pruebas.
 
-Siguiendo lo especificado en \S 2.2, se aplican técnicas de image augmentation al dataset de entrenamiento. TODO. En particular, se agrega un padding de 4 píxeles a cada lado, de modo tal que la imagen pasa a tener 40x40 píxeles. Con una probabilidad del 50\% se espeja la imagen horizontalmente. Finalmente, se toma un recorte aleatorio de 32x32 píxeles.
+Siguiendo lo especificado en \S 2.2, se aplican técnicas de image augmentation al dataset de entrenamiento. En particular, se agrega un padding de 4 píxeles a cada lado, de modo tal que la imagen pasa a tener 40x40 píxeles. Con una probabilidad del 50\% se espeja la imagen horizontalmente. Finalmente, se toma un recorte aleatorio de 32x32 píxeles.
 
 En etapa de pruebas, se toma una vista simple de la imagen original de 32x32. Es importante notar esto dado que el paper de ResNet utiliza otra técnica de evaluación, tomando múltiples vistas de la imagen original.
 
@@ -380,16 +388,18 @@ A fin de seguir los lineamientos planteados por el paper, se modificó el códig
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{images/lr_curve.png}
+\includegraphics[height=200px]{images/lr_curve.png}
 \caption{Curva de learning rate}
 \label{lrcurve}
 \end{figure}
 
 El entrenamiento se detiene a los 160 epochs.
 
-Todos los experimentos fueron llevados a cabo con CUDA 12.1 en una GPU Nvidia 2070 Super con 8GB de memoria de video.
+Todos los experimentos fueron llevados a cabo con CUDA 12.1 en una GPU Nvidia 2070 Super con 8GB de memoria de video, la cual posee un \href{https://developer.nvidia.com/cuda-gpus}{CUDA compute capability} de 7.5.
 
 \subsection{Resultados}
+
+En \ref{tabla1} se resumen los principales resultados de los experimentos realizados. Se indica la precisión obtenida (y su error como contraparte) junto con aquella reportada en el paper. Para que los números reportados sean más correctos, se podría haber tomado el promedio y desviación estándar de varias ejecuciones, pero por motivos de tiempo disponible, no fue posible. Se indica la diferencia entre los errores obtenidos y los reportados en el paper.
 
 % Please add the following required packages to your document preamble:
 % \usepackage[table,xcdraw]{xcolor}
@@ -409,9 +419,14 @@ Todos los experimentos fueron llevados a cabo con CUDA 12.1 en una GPU Nvidia 20
 \end{tabular}
 \end{adjustbox}
 \caption{Tabla de resumen de resultados obtenidos.}
+\label{tabla1}
 \end{table}
 
-TODO Diferencia hiperparametros
+Un detalle que resulta confuso es que la cantidad de parámetros entrenables de ResNet110 no se condice con lo reportado en el paper (en este experimento dió 1.73M, vs 1.14M en el paper). La cantidad de Mult-Add da una idea del costo computacional de inferencia de cada modelo.
+
+Los errores reportados dan \textit{razonablemente} dentro de lo esperado, sin notar diferencias que sean irreconciliables con lo reportado en el paper. A finales de 2017, fecha de publicación del paper bajo estudio, el SOTA para CIFAR10 era\footnote{\url{https://paperswithcode.com/sota/image-classification-on-cifar-10}} de \%97.88 de precisión \cite{hu2019squeezeandexcitation}, por lo que la diferencia en ese momento aún era de alrededor de 3.5\% de precisión.
+
+En \ref{test_set_acc} se muestra la curva de precisión sobre el set de test para cada uno de los modelos entrenados. Notemos que al cambiar el learning rate, los valores se estabilizan y se observa lo que los autores proclaman: agregar más capas en efecto aumenta la precisión sin notarse cambios grandes de comportamiento en \ref{train_loss}. En dicho gráfico se ven las curvas de pérdida para cada modelo durante entrenamiento, tanto para el set de pruebas como de entrenamiento. En \ref{train_loss_log} se ven las curvas en escala logarítmica para apreciar mejor la diferencia entre ambas curvas. Si bien se puede observar que la curva de pérdida de prueba aumenta luego del cambio de learning rate, su precisión mejora.
 
 \begin{figure}[H]
 \centering
@@ -433,6 +448,8 @@ TODO Diferencia hiperparametros
 \caption{Pérdida (cross-entropy) de cada modelo durante entrenamiento. Escala logarítmica.}
 \label{train_loss_log}
 \end{figure}
+
+En \ref{momentum} y \ref{momentum_large} se ven los valores aprendidos por los parámetros $k_n$, los momentos de cada una de las capas residuales.
 
 \begin{figure}[H]
 \centering
