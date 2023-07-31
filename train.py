@@ -84,7 +84,7 @@ def train_epoch(
     def train(data, info):
         net.train()  # turn to train mode
         inputs, labels = data
-        inputs, labels = Variable(inputs), Variable(labels)
+        #inputs, labels = Variable(inputs), Variable(labels)
         if global_cuda_available:
             inputs, labels = inputs.cuda(), labels.cuda()
         optimizer.zero_grad()
@@ -100,19 +100,20 @@ def train_epoch(
         correct_sum = 0
         total_loss_sum = 0.0
         total_ctr = 0
-        for data in testloader:
-            inputs, labels = data
-            inputs, labels = Variable(inputs, volatile=True), Variable(
-                labels, volatile=True
-            )
-            if global_cuda_available:
-                inputs, labels = inputs.cuda(), labels.cuda()
-            outputs = net(inputs)
-            _, predicted = torch.max(outputs.data, 1)
-            total_ctr += labels.size()[0]
-            correct_sum += (predicted == labels.data).sum()
-            loss = criterion(outputs, labels)
-            total_loss_sum += loss.data.item()  # [0]
+        with torch.no_grad():
+            for data in testloader:
+                inputs, labels = data
+                #inputs, labels = Variable(inputs, volatile=True), Variable(
+                #    labels, volatile=True
+                #)
+                if global_cuda_available:
+                    inputs, labels = inputs.cuda(), labels.cuda()
+                outputs = net(inputs)
+                _, predicted = torch.max(outputs.data, 1)
+                total_ctr += labels.size()[0]
+                correct_sum += (predicted == labels.data).sum()
+                loss = criterion(outputs, labels)
+                total_loss_sum += loss.data.item()  # [0]
         info[0] = correct_sum
         info[1] = total_ctr
         info[2] = total_loss_sum
@@ -232,36 +233,6 @@ class NN_SGDTrainer(object):
                 info[0], info[1], info[0] / info[1], info[2] / info[1]
             ),
         )
-
-    def plot_loss(self, label, filename):
-        extract_loss = re.compile(r"Epoch (\d+) finished, average loss: (\d.\d+)")
-        arr_loss = []
-        with open(self.output) as f:
-            # ctr = 0
-            for line in f:
-                match = extract_loss.match(line)
-                if match:
-                    arr_loss.append(match.group(2))
-        nparr_loss = np.array(arr_loss)
-        plt.plot(nparr_loss, label=label)
-        plt.legend()
-        plt.savefig(filename)
-
-    def plot_train(self, lable, filename):
-        extract_accuracy = re.compile(
-            r"Correct: (\d+), total: (\d+), accuracy: (\d.\d+), average loss: (\d.\d+)"
-        )
-        arr_acc = []
-        with open(self.output) as f:
-            # ctr = 0
-            for line in f:
-                match = extract_accuracy.match(line)
-                if match:
-                    arr_acc.append(match.group(3))
-        nparr_acc = np.array(arr_acc)
-        plt.plot(nparr_acc, label=lable)
-        plt.legend()
-        plt.savefig(filename)
 
     def get_net(self):
         return self.net
