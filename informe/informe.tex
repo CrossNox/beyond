@@ -5,6 +5,7 @@
 \usepackage{mathabx}
 \usepackage{adjustbox}
 \usepackage{graphicx}
+\usepackage{bbm}
 \usepackage{minted}
 \usepackage{booktabs}
 \usepackage[english,spanish,es-noindentfirst,es-nosectiondot,es-nolists,
@@ -19,7 +20,7 @@ es-noshorthands,es-lcroman,es-tabla]{babel}
 \hypersetup{colorlinks=true, allcolors=Navy, pdfstartview={XYZ null null 1}}
 \newtheorem{lemma}{Lema}
 \usepackage[width=14cm,left=3.5cm,marginparwidth=3cm,marginparsep=0.35cm,
-height=21cm,top=1.7cm,headsep=1cm, headheight=1.6cm, footskip=1.2cm, bottom=1.4cm]{geometry}
+height=21cm,top=1.7cm,headsep=1cm, headheight=1.6cm, footskip=1.2cm, bottom=2.4cm]{geometry}
 \usepackage{csquotes}
 \usepackage{mathrsfs}
 \usepackage{biblatex}
@@ -199,7 +200,7 @@ Cuya discretización más sencilla toma la forma
 
 Donde $\Delta t_l$ es el tamaño del l-ésimo paso. Notemos que esto es el primer paso del método de Euler.
 
-\subsubsection{PolyNet}
+\subsection{PolyNet}
 En \cite{szegedy2014going}, se propone una arquitectura llamada "Inception" cuyos bloques se muestran en \ref{inception_block}.
 
 \begin{figure}[H]
@@ -241,7 +242,7 @@ Esta formulación puede verse como un paso del método implicito de Euler
 
 Para la ecuación diferencial $u_t = f(u)$. El método implicito permite pasos mas grandes, de modo que son necesarios menos bloques encadenados para lograr clasificación de estado del arte.
 
-\subsubsection{FractalNet}
+\subsection{FractalNet}
 FractalNet \cite{larsson2017fractalnet} muestra que el aprendizaje explicito de residuales no es un imperativo para entrenar redes muy profundas.
 
 \begin{figure}[H]
@@ -275,7 +276,7 @@ Entonces, cada bloque de FractalNet de orden dos puede ser reescrito como:
 
 Lo cual puede ser considerado como un caso de un esquema de Runge-Kutta de segundo orden para la EDO $u_t = f(u,t)$.
 
-\subsubsection{RevNet}
+\subsection{RevNet}
 Recordemos que un sistema dinamico es reversible si su función de transición de estados es biyectiva. Es decir, para cada estado existe un unico estado anterior desde el cual podría haberse llegado.
 
 En \cite{gomez2017reversible} se propone RevNet, una arquitectura compuesta de una serie de bloques reversibles. Los parámetros de cada capa se particionan en dos grupos $x_1, x_2$. Cada bloque reversible toma dos entradas $(x_1, x_2)$ y produce dos salidas $(y_1, y_2)$ acorde a las reglas en \ref{eq_revnet} y funciones residuales $\mathscr{F}$ y $\mathscr{G}$ analogas a ResNet.
@@ -424,7 +425,7 @@ En \ref{tabla1} se resumen los principales resultados de los experimentos realiz
 
 Un detalle que resulta confuso es que la cantidad de parámetros entrenables de ResNet110 no se condice con lo reportado en el paper (en este experimento dió 1.73M, vs 1.14M en el paper). La cantidad de Mult-Add da una idea del costo computacional de inferencia de cada modelo.
 
-Los errores reportados dan \textit{razonablemente} dentro de lo esperado, sin notar diferencias que sean irreconciliables con lo reportado en el paper. A finales de 2017, fecha de publicación del paper bajo estudio, el SOTA para CIFAR10 era\footnote{\url{https://paperswithcode.com/sota/image-classification-on-cifar-10}} de \%97.88 de precisión \cite{hu2019squeezeandexcitation}, por lo que la diferencia en ese momento aún era de alrededor de 3.5\% de precisión.
+Los errores reportados dan \textit{razonablemente} dentro de lo esperado, sin notar diferencias que sean irreconciliables con lo reportado en el paper. A finales de 2017, fecha de publicación del paper bajo estudio, el SOTA para CIFAR10 era\footnote{\url{https://paperswithcode.com/sota/image-classification-on-cifar-10}} de 97.88\% de precisión \cite{hu2019squeezeandexcitation}, por lo que la diferencia en ese momento aún era de alrededor de 3.5\% de precisión.
 
 En \ref{test_set_acc} se muestra la curva de precisión sobre el set de test para cada uno de los modelos entrenados. Notemos que al cambiar el learning rate, los valores se estabilizan y se observa lo que los autores proclaman: agregar más capas en efecto aumenta la precisión sin notarse cambios grandes de comportamiento en \ref{train_loss}. En dicho gráfico se ven las curvas de pérdida para cada modelo durante entrenamiento, tanto para el set de pruebas como de entrenamiento. En \ref{train_loss_log} se ven las curvas en escala logarítmica para apreciar mejor la diferencia entre ambas curvas. Si bien se puede observar que la curva de pérdida de prueba aumenta luego del cambio de learning rate, su precisión mejora.
 
@@ -449,7 +450,7 @@ En \ref{test_set_acc} se muestra la curva de precisión sobre el set de test par
 \label{train_loss_log}
 \end{figure}
 
-En \ref{momentum} y \ref{momentum_large} se ven los valores aprendidos por los parámetros $k_n$, los momentos de cada una de las capas residuales.
+En \ref{momentum} y \ref{momentum_large} se ven los valores aprendidos por los parámetros $k_n$, los momentos de cada una de las capas residuales. Este punto es donde mayor discrepancias se encuentran respecto del paper original. En primer instancia, el paper proclama que estos valores se inicializan $\sim \mathscr{U}(-0.1, 0)$, sin embargo en el código original~\footnote{\url{https://github.com/2prime/LM-ResNet/blob/ff49654a50abd76f9fd40342a6d7b82e3ff11c31/MResNet.py\#L139}} los valores se inicializan en $\mathscr{U}(1.0, 1.1)$. Tal como se hizo antes, se toma lo explicado en el paper como verdad, y se modifica el código acorde. Notemos que esto, sin embargo, hace que ambas discrepancias tomen sentido: $1 - \mathscr{U}(1.0, 1.1) \sim \mathscr{U}(-0.1, 0.0)$. Sin embargo, por claridad, se prefiere dejar el código corregido para cumplir con lo descrito explícitamente. En segunda instancia, los momentos reportados en el paper decaen conforme se avanza por la red y se distribuyen en $\left[-2.0, 1.0\right]$. En los experimentos de replicación, vemos que los valores se mantienen en $\left[-0.1, 0.0\right]$. Aún luego de varias revisiones, no se evidencia un error en el código por el cual estos valores no se modifiquen con el tiempo.
 
 \begin{figure}[H]
 \centering
@@ -465,7 +466,6 @@ En \ref{momentum} y \ref{momentum_large} se ven los valores aprendidos por los p
 \label{momentum_large}
 \end{figure}
 
-
 \section{Sistemas dinámicos estocásticos}
 En \cite{huang2016deep}, se propone, aleatoriamente eliminar un subset de capas y reemplazarlas por la función identidad. Se inicia con una red extremadamente profunda (incluso más de 1200 capas) para luego ir eliminando algunas durante cada epoch de entrenamiento. Por otro lado, \cite{gastaldi2017shakeshake} propone utilizar regularización shake-shake para mejorar los resultados de una red con múltiples ramas (como LM-Resnet), reemplazando la operación de suma como unión de ramas por una operación afín estocástica.
 
@@ -476,23 +476,23 @@ Tal como se adelantó, en \cite{gastaldi2017shakeshake} se propone la siguiente 
 	X_{n+1} = X_n + \eta f_1(X_n) + (1-\eta) f_2 (X_n)
 \end{align}
 
-Como operador de unión de múltiples componentes de un bloque residual. $\eta \sim \mathscr{U}(0,1)$. Introduciendo un paso temporal $\Delta t$ encontramos su sistema dinamico estocástico:
+Como operador de unión de múltiples componentes de un bloque residual. $\eta \sim \mathscr{U}(0,1)$. Introduciendo un paso temporal $\Delta t$ encontramos su sistema dinamico estocástico asociado:
 
 \begin{align}\label{shakeshake_step}
 	X_{n+1} = X_n + \left(\dfrac{\Delta t}{2} + \sqrt{\Delta t}(\eta - \dfrac{1}{2})\right) f_1(X_n) + \left( \dfrac{\Delta t}{2} + \sqrt{\Delta t} (\dfrac{1}{2} - \eta) \right) f_2(X_n)
 \end{align}
 
-Cuando $\Delta t \equiv 1$, la ecuación anterior se reduce a la regularización shake-shake. Cuando se elige $\Delta t \neq 1$, entonces se tienen alternativas a la regularizacion shake-shake. En el paper se deriva, desde \ref{shakeshake_step}, que la red correspondiente a la regularización shake-shake es una aproximación débil del siguiente sistema dinámico estocástico:
+Cuando $\Delta t \equiv 1$, la ecuación anterior se reduce a la regularización shake-shake, pero cuando se elige $\Delta t \neq 1$, entonces se tienen alternativas a la misma. En el paper se deriva, desde \ref{shakeshake_step}, que la red correspondiente a la regularización shake-shake es una aproximación débil del siguiente sistema dinámico estocástico:
 
 \begin{align}
 	dX &= \dfrac{1}{2} (f_1(X) + f_2(X)) dt\\
-	   &+ \dfrac{1}{\sqrt{12}} (f_1(X) - f_2(X)) \odot \left[ \mathbb{1}_{N\times 1}, \mathbb{0}_{N,N-1} \right] dB_t
+	   &+ \dfrac{1}{\sqrt{12}} (f_1(X) - f_2(X)) \odot \left[ \mathbbm{1}_{N\times 1}, 0_{N,N-1} \right] dB_t
 \end{align}
 
 Donde $dB_t$ es un vector de $N$ dimensiones de movimiento Browniano.
 
 \subsection{Profundidad estocástica}
-En \cite{huang2016deep}, como se adelantó, se propone eliminar bloques residuales aleatoriamente durante entrenamiento. Esto obedece a varios objetivos. En primer lugar, reducir el tiempo de entrenamiento. En segundo lugar, mejorar la robustez de la red. Es decir, actúa como método de regularización.
+En \cite{huang2016deep}, como se adelantó, se propone eliminar bloques residuales aleatoriamente durante entrenamiento. Esto obedece a varios objetivos: en primer lugar, reducir el tiempo de entrenamiento. En segundo lugar, mejorar la robustez de la red. Es decir, actúa como método de regularización.
 
 El paso hacia adelante de propagación de gradientes se vería como:
 
@@ -503,7 +503,7 @@ El paso hacia adelante de propagación de gradientes se vería como:
 Donde $\mathbb{P}(\eta_n = 1) = p_n, \mathbb{P}(\eta_n = 0) = 1 - p_n$. Al introducir un paso temporal $\Delta t \equiv 1$, se deriva que la red con dropout estocástico se reduce a una aproximación débil del sistema estocástico dinámico
 
 \begin{align}
-	dX = p(t) f(X) dt + \sqrt{p(t) (1-p(t))} f(X) \odot [\mathbb{1}_{N \times 1}, \mathbb{0}_{N, N - 1}] dB_t
+	dX = p(t) f(X) dt + \sqrt{p(t) (1-p(t))} f(X) \odot [\mathbbm{1}_{N \times 1}, 0_{N, N - 1}] dB_t
 \end{align}
 
 \subsection{Entrenamiento estocástico para LM-ResNet}
@@ -522,6 +522,29 @@ El dataset se trata del mismo modo que para experimentos anteriores. En este cas
 Para LM-ResNet56 se selecciona $p_L = 0.8$ y para LM-ResNet110 se selecciona $p_L = 0.5$. Se entrena utilizando descenso estocástico por gradiente con decaimiento de peso de 0.0001 y momento de 0.9. El factor de aprendizaje arranca en 0.1, pasa a ser 0.01 luego del epoch 250 y 0.001 luego del epoch 375. El entrenamiento termina a los 500 epochs.
 
 \subsubsection{Resultados obtenidos}
+
+En \ref{tabla2} se resumen los principales resultados de los experimentos de entrenamiento estocástico. Estos experimentos, considerando que tienen un costo computacional más alto y entrenan por 3 veces más epochs que las anteriores pruebas, tardan mas que las pruebas para los 6 modelos sin entrenamiento estocástico. Se utiliza regularización dropout acorde a las pruebas reportadas en el paper. Se implementa la regularización shake-shake mediante la suma de ruido uniforme a la salida de cada bloque residual. Sin embargo, al no tener un valor de referencia en el paper, no se ejecutaron las pruebas.
+
+Vemos que los valores de precisión obtenidos se corresponden con los reportados, dentro de márgenes de error aceptables para ambas configuraciones de la arquitectura LM-ResNet. Resulta destacable que LM-ResNet56 con entrenamiento estocástico tiene un error menor que LM-ResNet110 y LM-ResNet164 sin entrenamiento estocástico, y con la mitad de parámetros. LM-ResNet110 con entrenamiento estocástico logra una mejora de 6.8\% error relativo respecto de LM-ResNet164 sin entrenamiento estocástico y \textbf{20\%} respecto de LM-ResNet110 sin entrenamiento estocástico.
+
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+\begin{table}[H]
+\begin{adjustbox}{center}
+\begin{tabular}{l|ll|ll|lll|}
+\cline{2-8}
+ & \multicolumn{2}{c|}{\textbf{Replicación}} & \multicolumn{2}{c|}{\textbf{Paper}} &  &  &  \\ \cline{2-8}
+ & \multicolumn{1}{c}{\textbf{Acc.}} & \multicolumn{1}{c|}{\textbf{Error (\%)}} & \multicolumn{1}{c}{\textbf{Acc.}} & \multicolumn{1}{c|}{\textbf{Error}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Diferencia\\ de error\end{tabular}}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Parámetros\\ entrenables\end{tabular}}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Mult-Add\\ totales (G)\end{tabular}}} \\ \hline
+\multicolumn{1}{|l|}{\textbf{MResNet-56}} & 0.9484 & 5.16 & 0.9486 & 5.14 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.02} & \multicolumn{1}{l|}{856789} & 16.10 \\
+\multicolumn{1}{|l|}{\textbf{MResNet-110}} & 0.9509 & 4.91 & 0.9520 & 4.80 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFCE93}-0.11} & \multicolumn{1}{l|}{1731760} & 32.40 \\ \hline
+\end{tabular}
+\end{adjustbox}
+\caption{Tabla de resumen de resultados obtenidos para entrenamiento estocástico.}
+\label{tabla2}
+\end{table}
+
+En \ref{sd_test_set_acc} se muestra la curva de precisión sobre el set de test para ambos modelos entrenados con entrenamiento estocástico. Se observa un comportamiento similar al de experimentos anteriores donde al disminuir el learning rate se estabiliza la precisión. En \ref{train_loss_sd} se observa la pérdida durante entrenamiento tanto para el set de test como de entrenamiento. Las diferencias enter ambas curvas se observan mejor en \ref{train_loss_log_sd}. En éste último gráfico se observa un fenómeno no observado previamente: la pérdida de entrenamiento comienza a subir antes de volver a disminuir el learning rate a 0.001, donde vuelve a bajar.
 
 \begin{figure}[H]
 \centering
@@ -544,6 +567,8 @@ Para LM-ResNet56 se selecciona $p_L = 0.8$ y para LM-ResNet110 se selecciona $p_
 \label{train_loss_log_sd}
 \end{figure}
 
+Tal como en experimentos anteriores, en \ref{sd_momentum} se observa que el comportamiento de los valores $k_n$ aprendidos para cada capa residual son aleatorios dentro del rango de inicialización.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{images/momentum_sd.png}
@@ -551,16 +576,22 @@ Para LM-ResNet56 se selecciona $p_L = 0.8$ y para LM-ResNet110 se selecciona $p_
 \label{sd_momentum}
 \end{figure}
 
+\section{Una nota sobre el método de ecuaciones modificadas}
+La ecuación modificada de un esquema de análisis numérico que aproxima un sistema de ecuaciones por diferencias es otra ecuación diferencial que puede ser mejor aproximado por el esquema numérico. Se utilizan para describir las propiedades de dichos esquemas. La conclusión relevante del paper es que cuando $f$, la función aproximada por el esquema de Euler de primer orden de ResNet, es un flojo de gradientes, la ecuación de diferencias de LM-ResNet tiene una condición de estabilidad $-1 \leq k_n \leq 1$.
 
 \section{Conclusión}
-En el presente trabajo se explica el paper ``Beyond Finite Layer Neural Networks'', explicando el estado del arte previo, su motivación y los temas más relevantes de la literatura relacionada. Se implementan los pipelines de entrenamientos necesarios para replicar los resultados, reportamos la diferencia obtenida respecto de los resultados reportados en el paper. Se hacen notar varios problemas en el paper original y el código.
+En el presente trabajo se explica el paper ``Beyond Finite Layer Neural Networks'', haciendo un repaso del estado del arte previo, su motivación y los temas más relevantes de la literatura relacionada. Se implementan los pipelines de entrenamientos necesarios para replicar los resultados, se reporta la diferencia obtenida respecto de los resultados mencionados en el paper y se hacen notar varios problemas en el paper original y el código.
+
+Una observación que destaca es que los momentos $k_n$ no parecen tener relevancia en el resultado final de la red. Si bien se replican los resultados, no parece que aprender estos valores de escala de cada paso de un método numérico de dos pasos resulte condición necesaria para el resultado final.
+
+Considero que los objetivos del trabajo han sido cumplidos, sin embargo, se abren las puertas a varias líneas de mejora sucesivas.
 
 \subsection{Trabajo futuro propuesto}
+Un camino que no see exploró es el de replicar los resultados para CIFAR100 e ImageNet. Esto se debió a los tiempos de entrenamiento necesarios, pero principalmente debido a que no parecía aportar demasiado respecto de las pruebas realizadas. Se propone también hacer una revisión sobre los valores de $k_n$ para ver si estos están siendo considerados durante la backpropagation de los gradientes.
+
 En \href{https://paperswithcode.com/sota/image-classification-on-cifar-10}{la página de SOTA de CIFAR10 de Papers with Code} se ve que desde la publicación del paper objeto de estudio del presente informe, el estado del arte movió el mejor valor reportado de 97.02\% a 99.5\% en 2021. Desde entonces, y hasta la fecha en 2023, no se han reportado mejores resultados.
 
-Hay dos hechos notables que pienso que ofrecen una oportunidad interesante de investigación. Por un lado, \cite{kolesnikov2020big} introduce BiT, una arquitectura basada en ResNet-v2 que marca un nuevo récord de precisión sobre CIFAR10. Este récord se mantiene desde 2020 hasta que \cite{dosovitskiy2021image} introduce ViT-H/14 en 2021. Esta nueva arquitectura está basada en \cite{vaswani2023attention} la arquitectura Transformer, en la cual se basan las arquitecturas de mejor performance a la fecha, a través de diferentes dominios como NLP y Computer Vision.
-
-En primer lugar, propongo adaptar la arquitectura LM a BiT y evaluar si los resultados obtenidos mejoran respecto de la publicación original. Por otro lado, si observamos en \ref{transformer}, vemos que tanto el encoder como el decoder de la arquitectura de Transformer poseen conexiones residuales, lo cual lleva a pensar que quizás se puedan aplicar los mismos principios aquí estudiados. Sin embargo, resulta más interesante que \cite{lu2019understanding}, con primer autor al mismo autor del paper objecto de estudio del presente informe, estudia a la arquitectura de Transformers como un método de resolucion de EDOs para una ecuación se convección-difusión en un sistema dinámico de múltiples partículas. Propongo evaluar agregar este paper a la lista de papers posibles sobre los cuales realizar una monografía dentro del marco de la materia.
+Hay dos hechos notables que pienso que ofrecen una oportunidad interesante de investigación. Por un lado, \cite{kolesnikov2020big} introduce BiT, una arquitectura basada en ResNet-v2 que marca un nuevo récord de precisión sobre CIFAR10. Este récord se mantiene desde 2020 hasta que \cite{dosovitskiy2021image} introduce ViT-H/14 en 2021. Esta nueva arquitectura está basada en \cite{vaswani2023attention} la arquitectura Transformer, en la cual se basan las arquitecturas de mejor performance a la fecha, en diferentes dominios como NLP y Computer Vision.
 
 \begin{figure}[H]
 \centering
@@ -568,6 +599,8 @@ En primer lugar, propongo adaptar la arquitectura LM a BiT y evaluar si los resu
 \caption{Bloque de transformer}
 \label{transformer}
 \end{figure}
+
+En primer lugar, propongo adaptar la arquitectura LM a BiT y evaluar si los resultados obtenidos mejoran respecto de la publicación original. Por otro lado, si observamos en \ref{transformer}, vemos que tanto el encoder como el decoder de la arquitectura de Transformer poseen conexiones residuales, lo cual lleva a pensar que quizás se puedan aplicar los mismos principios aquí estudiados. Sin embargo, resulta más interesante que \cite{lu2019understanding}, con primer autor al mismo autor del paper objecto de estudio del presente informe, estudia a la arquitectura de Transformers como un método de resolucion de EDOs para una ecuación se convección-difusión en un sistema dinámico de múltiples partículas. Propongo evaluar agregar este paper a la lista de papers posibles sobre los cuales realizar una monografía dentro del marco de la materia.
 
 \newpage
 
