@@ -402,6 +402,7 @@ Todos los experimentos fueron llevados a cabo con CUDA 12.1 en una GPU Nvidia 20
 
 En \ref{tabla1} se resumen los principales resultados de los experimentos realizados. Se indica la precisión obtenida (y su error como contraparte) junto con aquella reportada en el paper. Para que los números reportados sean más correctos, se podría haber tomado el promedio y desviación estándar de varias ejecuciones, pero por motivos de tiempo disponible, no fue posible. Se indica la diferencia entre los errores obtenidos y los reportados en el paper.
 
+
 % Please add the following required packages to your document preamble:
 % \usepackage[table,xcdraw]{xcolor}
 % If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
@@ -411,12 +412,12 @@ En \ref{tabla1} se resumen los principales resultados de los experimentos realiz
 \cline{2-8}
  & \multicolumn{2}{c|}{\textbf{Replicación}} & \multicolumn{2}{c|}{\textbf{Paper}} &  &  &  \\ \cline{2-8}
  & \multicolumn{1}{c}{\textbf{Acc.}} & \multicolumn{1}{c|}{\textbf{Error (\%)}} & \multicolumn{1}{c}{\textbf{Acc.}} & \multicolumn{1}{c|}{\textbf{Error (\%)}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Diferencia\\ de error\end{tabular}}} & \multicolumn{1}{l|}{\textbf{\begin{tabular}[c]{@{}l@{}}Parametros\\ entrenables\end{tabular}}} & \textbf{\begin{tabular}[c]{@{}l@{}}Mult-Add\\ totales (G)\end{tabular}} \\ \hline
-\multicolumn{1}{|l|}{\textbf{MResNet-20}} & 0.9166 & 8.34 & 0.9167 & 8.33 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.01} & \multicolumn{1}{l|}{273475} & 5.22 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-32}} & 0.9270 & 7.30 & 0.9282 & 7.18 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFCE93}-0.12} & \multicolumn{1}{l|}{467913} & 8.85 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-44}} & 0.9293 & 7.07 & 0.9334 & 6.66 & \multicolumn{1}{l|}{\cellcolor[HTML]{FF6961}-0.41} & \multicolumn{1}{l|}{662351} & 12.47 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-56}} & 0.9323 & 6.77 & 0.9369 & 6.31 & \multicolumn{1}{l|}{\cellcolor[HTML]{FF6961}-0.46} & \multicolumn{1}{l|}{856789} & 16.10 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-110}} & 0.9347 & 6.53 & 0.9384 & 6.16 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.08} & \multicolumn{1}{l|}{1731760} & 32.40 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-164}} & 0.9447 & 5.53 & 0.9473 & 5.27 & \multicolumn{1}{l|}{\cellcolor[HTML]{FE996B}-0.26} & \multicolumn{1}{l|}{1703760} & 31.70 \\ \hline
+\multicolumn{1}{|l|}{\textbf{MResNet-20}} & 0.9200 & 8.00 & 0.9167 & 8.33 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}+0.33} & \multicolumn{1}{l|}{273475} & 5.22 \\
+\multicolumn{1}{|l|}{\textbf{MResNet-32}} & 0.9204 & 7.96 & 0.9282 & 7.18 & \multicolumn{1}{l|}{\cellcolor[HTML]{FF6961}-0.78} & \multicolumn{1}{l|}{467913} & 8.85 \\
+\multicolumn{1}{|l|}{\textbf{MResNet-44}} & 0.9279 & 7.21 & 0.9334 & 6.66 & \multicolumn{1}{l|}{\cellcolor[HTML]{FE996B}-0.55} & \multicolumn{1}{l|}{662351} & 12.47 \\
+\multicolumn{1}{|l|}{\textbf{MResNet-56}} & 0.9315 & 6.85 & 0.9369 & 6.31 & \multicolumn{1}{l|}{\cellcolor[HTML]{FE996B}-0.54} & \multicolumn{1}{l|}{856789} & 16.10 \\
+\multicolumn{1}{|l|}{\textbf{MResNet-110}} & 0.9357 & 6.43 & 0.9384 & 6.16 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.27} & \multicolumn{1}{l|}{1731760} & 32.40 \\
+\multicolumn{1}{|l|}{\textbf{MResNet-164}} & 0.9439 & 5.61 & 0.9473 & 5.27 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.34} & \multicolumn{1}{l|}{1703760} & 31.70 \\ \hline
 \end{tabular}
 \end{adjustbox}
 \caption{Tabla de resumen de resultados obtenidos.}
