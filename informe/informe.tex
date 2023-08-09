@@ -50,14 +50,14 @@ height=21cm,top=1.7cm,headsep=1cm, headheight=1.6cm, footskip=1.2cm, bottom=2.4c
 \newpage
 
 \section{Introducción}
-En el presente trabajo se apunta a explicar el paper \textit{Beyond Finite Layer Neural Networks: Bridging Deep Architectures and Numerical Differential Equations}\cite{lu18d} de \textit{Lu et. al}.  Se introduce la motivación de los autores, una breve reseña de la literatura para explicar el estado del arte en el momento de publicación, se explican los puntos principales del paper y mostramos los resultados obtenidos al intentar replicar los resultados obtenidos en el paper.
+En el presente trabajo se apunta a explicar el paper \textit{Beyond Finite Layer Neural Networks: Bridging Deep Architectures and Numerical Differential Equations}\cite{lu18d} de \textit{Lu et. al}.  Se introduce la motivación de los autores, una breve reseña de la literatura para explicar el estado del arte en el momento de publicación, se explican los puntos principales del paper y se muestran los resultados obtenidos al intentar replicar los resultados obtenidos en el paper.
 
 \subsection{Entrenamiento de redes neuronales muy profundas}
 Las redes neuronales convolucionales empezaron a dominar el campo de vision por computadora luego de la introducción de AlexNet \cite{DBLP:journals/corr/Krizhevsky14} en 2012. Una gran ventaja de esta familia de modelos es que aprenden mapas de \textit{features} junto con un clasificador en un proceso punta a punta. De este modo, no es necesario que se definan a priori las \textit{features} relevantes de la imagen o del dominio bajo estudio.
 
-Desde entonces, se ha acelerado el estudio de estas familias de modelos, con aplicaciones varias en imágenes, lenguaje natural, sonido, procesamiento de señales, sistemas de recomendaciones, entre otras. Distintos papers elaboran sobre la importancia de la profundidad de dichas redes para lograr mejores resultados. Es decir, la performance, bajo alguna medida de performance relevante al problema, aumenta al agregar capas de parámetros libres o bloques con más neuronas. Sin embargo, el entrenamiento de modelos cada vez más grandes ha expuesto varios problemas relacionados a la convergencia del entrenamiento.
+Desde entonces, se ha acelerado el estudio de estas familias de modelos, con aplicaciones varias en imágenes, lenguaje natural, sonido, procesamiento de señales, sistemas de recomendaciones, entre otras áreas. Distintos papers elaboran sobre la importancia de la profundidad de dichas redes para lograr mejores resultados. Es decir, la performance, bajo alguna medida de performance relevante al problema, aumenta al agregar capas de parámetros libres o bloques con más neuronas. Sin embargo, el entrenamiento de modelos cada vez más grandes ha expuesto varios problemas relacionados a la convergencia del entrenamiento.
 
-Dos problemas comunes a la hora de entrenar redes neuronales muy profundas es la explosión de gradientes y el desvanecimiento de gradientes. El primero se refiere a que los valores de los gradientes a medida que se propagan por la red toman valores exponencialmente más grandes, hasta tomar el valor \texttt{NaN}. De este valor, no se pueden recuperar, dado que las operaciones de matmul no se encuentran definidas. El segundo se refiere al caso contrario, donde los gradientes se vuelven progresivamente más pequeños y tienden a cero, frenando por completo el entrenamiento. En ambos casos, la convergencia de la red se ve afectada. Ambos problemas se hacen más aparentes en redes neuronales muy profundas. Estos problemas han sido, a grandes rasgos, resueltos mediante el uso de distintos métodos de regularización entre capas así como mediante inicialización normalizada de los parámetros de la red.
+Dos problemas comunes a la hora de entrenar redes neuronales muy profundas son la explosión de gradientes y el desvanecimiento de gradientes. El primero se refiere a que los valores de los gradientes a medida que se propagan por la red toman valores exponencialmente más grandes, hasta tomar el valor \texttt{NaN}. De este valor, no se pueden recuperar, dado que las operaciones de matmul no se encuentran definidas. El segundo se refiere al caso contrario, donde los gradientes se vuelven progresivamente más pequeños y tienden a cero, frenando por completo el entrenamiento. En ambos casos, la convergencia de la red se ve afectada. Ambos problemas se hacen más aparentes en redes neuronales muy profundas. Estos problemas han sido, a grandes rasgos, resueltos mediante el uso de distintos métodos de regularización entre capas así como mediante inicialización normalizada de los parámetros de la red.
 
 Sin embargo, aún convergiendo, una consecuencia de aumentar la profundidad de las redes, es que se evidencia una degradación en el error de aprendizaje: la precisión de la red se satura y luego empeora al intentar agregar más capas. Sería natural pensar que se trata de un caso de sobreajuste u \textit{overfitting}, pero no es el caso.
 
@@ -72,7 +72,7 @@ Dentro de la literatura que trata de resolver este problema, \cite{DBLP:journals
 \label{ex_cnn}
 \end{figure}
 
-La segunda CNN en \ref{ex_cnn} posee una capa mas de conv-maxpooling que la primera. Asumamos que las demás capas están copiadas de la primer CNN de la figura, con sus mismos pesos. La capa extra podría aprender un mapeo de identidad y por tanto tener \textit{al menos} la misma precisión que la primer CNN de la figura. Esta solución por construcción de una red efectivamente más profunda indicaría que una red más profunda debería tener un error de entrenamiento más chico que una red más chica, pero esto se contradice con distintos resultados experimentales.
+La segunda CNN en \ref{ex_cnn} posee una capa más de conv-maxpooling que la primera. Asumamos que las demás capas están copiadas de la primer CNN de la figura, con sus mismos pesos. La capa extra podría aprender un mapeo de identidad y por tanto tener \textit{al menos} la misma precisión que la primer CNN de la figura. Esta solución por construcción de una red efectivamente más profunda indicaría que una red más profunda debería tener un error de entrenamiento más chico que una red más chica, pero esto se contradice con distintos resultados experimentales.
 
 En lugar de esperar que algún conjunto de capas aprendan un mapeo deseado, se les hace aprender un mapeo residual: deseando aprender el mapeo $\mathscr{H}(x)$, dejan que ese conjunto no lineal de capas aprenda $\mathscr{F}(x) = \mathscr{H}(x) - x$, de modo de obtener la función original como $\mathscr{F}(x) + x$. Los autores conjeturan que es más fácil optimizar el mapeo residual que el mapeo original. Volviendo a nuestro argumento de construcción, si el mapeo identidad fuera óptimo, sería más facil llevar el residual a cero que aprender $\mathscr{H}(x)$ como un mapeo de identidad.
 
@@ -172,9 +172,9 @@ Observemos, brevemente, que cada bloque residual de ResNet puede ser descrito po
 	y_{l+1} &= g(y_l)
 \end{align}
 
-Donde $z_l$ es la entrada del l-ésima capa, $z_{l+1}$ es la salida de la l-ésima capa, $y_l$ es una variable auxiliar de la l-ésima capa, $h, g$ son mapeos que pueden ser no-lineales. El entrenamiento se determina experimentalemente \cite{he2016identity} que es más facil si sendos $g$ y $h$ son el mapa identidad.
+Donde $z_l$ es la entrada del l-ésima capa, $z_{l+1}$ es la salida de la l-ésima capa, $y_l$ es una variable auxiliar de la l-ésima capa, $h, g$ son mapeos que pueden ser no-lineales. El entrenamiento se determina experimentalemente \cite{he2016identity} que es más fácil si tanto $g$ como $h$ son el mapa identidad.
 
-Consideremos $G$ como la inversa de $g$, entonces el sistema dinamico anterior puede ser descrito como
+Consideremos $G$ como la inversa de $g$, entonces el sistema dinámico anterior puede ser descrito como
 
 \begin{align}\label{ODE23}
 	z_{l+1} = G(h(z_l) + \mathscr{F}(z_l, W_l))
@@ -201,7 +201,7 @@ Cuya discretización más sencilla toma la forma
 Donde $\Delta t_l$ es el tamaño del l-ésimo paso. Notemos que esto es el primer paso del método de Euler.
 
 \subsection{PolyNet}
-En \cite{szegedy2014going}, se propone una arquitectura llamada "Inception" cuyos bloques se muestran en \ref{inception_block}.
+En \cite{szegedy2014going}, se propone una arquitectura llamada ``Inception'' cuyos bloques se muestran en~\ref{inception_block}.
 
 \begin{figure}[H]
 \centering
@@ -219,7 +219,7 @@ Zhang et al proponen en \cite{zhang2017polynet} utilizar bloques de Inception co
 \label{polynet_block}
 \end{figure}
 
-Es necesario aclarar que todos los bloques etiquetados "Inception F" comparten sus parámetros. Configuraciones donde distintos bloques no comparten parámetros son también estudiadas. La motivación principal es estudiar composiciones polinomiales de operadores para explorar la diversidad estructural que permite combinar aditivamente distintos bloques.
+Es necesario aclarar que todos los bloques etiquetados ``Inception F'' comparten sus parámetros. Configuraciones donde distintos bloques no comparten parámetros son también estudiadas. La motivación principal es estudiar composiciones polinomiales de operadores para explorar la diversidad estructural que permite combinar aditivamente distintos bloques.
 
 Notar que esto resulta en un término de segundo orden respecto de ResNet.
 
@@ -234,13 +234,13 @@ Cuyo lado izquierdo puede reescribirse como
 
 De modo tal que su computo sea mas eficiente.
 
-Esta formulación puede verse como un paso del método implicito de Euler
+Esta formulación puede verse como un paso del método implícito de Euler
 
 \begin{align}
 	u_{n+1} = (I -\Delta tf)^{-1}u_n
 \end{align}
 
-Para la ecuación diferencial $u_t = f(u)$. El método implicito permite pasos mas grandes, de modo que son necesarios menos bloques encadenados para lograr clasificación de estado del arte.
+Para la ecuación diferencial $u_t = f(u)$. El método implícito permite pasos mas grandes, de modo que son necesarios menos bloques encadenados para lograr clasificación de estado del arte.
 
 \subsection{FractalNet}
 FractalNet \cite{larsson2017fractalnet} muestra que el aprendizaje explicito de residuales no es un imperativo para entrenar redes muy profundas.
@@ -260,7 +260,7 @@ Los fractales sucesivos se definen como
 	f_{C+1}(z) = \left[ (f_C \circ f_C)(z) \right] \oplus \left[ \text{conv}(z) \right]
 \end{align}
 
-Donde $\circ$ denota composicion de funciones y $\oplus$ un operador de unión. Este operador de unión puede ser, por ejemplo, concatenación o suma elemento a elemento. Los autores utilizan el promedio elemento a elemento.
+Donde $\circ$ denota composición de funciones y $\oplus$ un operador de unión. Este operador de unión puede ser, por ejemplo, concatenación o suma elemento a elemento. Los autores utilizan el promedio elemento a elemento.
 
 Entonces, \ref{fractal_net_eq} puede ser reescrito como:
 
@@ -279,7 +279,7 @@ Lo cual puede ser considerado como un caso de un esquema de Runge-Kutta de segun
 \subsection{RevNet}
 Recordemos que un sistema dinamico es reversible si su función de transición de estados es biyectiva. Es decir, para cada estado existe un unico estado anterior desde el cual podría haberse llegado.
 
-En \cite{gomez2017reversible} se propone RevNet, una arquitectura compuesta de una serie de bloques reversibles. Los parámetros de cada capa se particionan en dos grupos $x_1, x_2$. Cada bloque reversible toma dos entradas $(x_1, x_2)$ y produce dos salidas $(y_1, y_2)$ acorde a las reglas en \ref{eq_revnet} y funciones residuales $\mathscr{F}$ y $\mathscr{G}$ analogas a ResNet.
+En~\cite{gomez2017reversible} se propone RevNet, una arquitectura compuesta de una serie de bloques reversibles. Los parámetros de cada capa se particionan en dos grupos $x_1, x_2$. Cada bloque reversible toma dos entradas $(x_1, x_2)$ y produce dos salidas $(y_1, y_2)$ acorde a las reglas en \ref{eq_revnet} y funciones residuales $\mathscr{F}$ y $\mathscr{G}$ análogas a ResNet.
 
 \begin{align}\label{eq_revnet}
 	y_1 &= x_1 + \mathscr{F}(x_2) \\
@@ -295,7 +295,7 @@ Por tanto, las activaciones de una capa pueden ser reconstruidas desde las activ
 
 De este modo, se ejecuta backpropagation sin guardar las activaciones en memoria.\footnote{La VRAM en GPUs suele ser un limitante en el entrenamiento. Si la arquitectura tiene muchos parámetros, es común utilizar un batch size más chico, lo cual es subóptimo para SGD con mini batches.} De este modo, su costo en memoria es independiente de su profundidad, a excepción de algunas pocas capas no reversibles.
 
-Reformulemos \ref{eq_revnet} como el siguiente sistema dinamico discreto:
+Reformulemos \ref{eq_revnet} como el siguiente sistema dinámico discreto:
 
 \begin{align}
 	X_{n+1} &= X_n + \mathscr{F}(Y_n) \\
@@ -333,7 +333,7 @@ Un método multi pasos de orden $m > 1$ es aquel cuya ecuación en diferencias p
 
 Con $i=m-1, m, \cdots, N-1$ y donde $a_0, a_1, \cdots, a_{m-1}$ y $b_0, b_1, \cdots, b_m$ son constantes y los valores iniciales $y_0 = \alpha, y_1 = \alpha_1, y_2 = \alpha_2, \cdots, y_{m-1} = \alpha_{m-1}$ son especificados.
 
-Si $b_m = 0$, el método es \textbf{explícito o abierto} ya que el valor de $w_{i+1}$ se da explícitamente en términos de los valores previamente calculados. Cuando $b_m \neq 0$, el método es \textbf{implícito o cerrado}, ya que el valor de $w_{i+1}$ se encuentra en ambos miembros de la ecuación y se especifica sólo implicitamente.
+Si $b_m = 0$, el método es \textbf{explícito o abierto} ya que el valor de $w_{i+1}$ se da explícitamente en términos de los valores previamente calculados. Cuando $b_m \neq 0$, el método es \textbf{implícito o cerrado}, ya que el valor de $w_{i+1}$ se encuentra en ambos miembros de la ecuación y se especifica sólo implícitamente.
 
 \subsubsection{Formulación de LM-ResNet}
 La arquitectura LM puede ser formulada como
@@ -342,7 +342,7 @@ La arquitectura LM puede ser formulada como
 	u_{n+1} = (1-k_n) u_n + k_n u_{n-1} + f_n(u_n)
 \end{align}
 
-Donde $k_n \in \mathbb{R}^n$ es un paramétro entrenable de cada capa que actúa como factor de escalado del residuo de la capa actual y la anterior. La figura \ref{lmblock} muestra el bloque de LM-ResNet \textit{acorde al código original}. Notar que \ref{lmblockorig}, el bloque según el paper, presenta diferencias. En primer instancia, el código original multiplica el residuo de la capa previa por $1-k_s$, pero acorde a la ecuación \ref{LM_arch}, y el diagrama \ref{lmblockorig}, se multiplica por $k_s$. El diagrama original es poco claro también, pareciendo indicar que se multiplica $u_n$ tanto por $k_s$ como por $1-k_s$.
+Donde $k_n \in \mathbb{R}^n$ es un parámetro entrenable de cada capa que actúa como factor de escalado del residuo de la capa actual y la anterior. La figura~\ref{lmblock} muestra el bloque de LM-ResNet \textit{acorde al código original}. Notar que~\ref{lmblockorig}, el bloque según el paper, presenta diferencias. En primer instancia, el código original multiplica el residuo de la capa previa por $1-k_s$, pero acorde a la ecuación~\ref{LM_arch}, y el diagrama \ref{lmblockorig}, se multiplica por $k_s$. El diagrama original es poco claro también, pareciendo indicar que se multiplica $u_n$ tanto por $k_s$ como por $1-k_s$.
 
 \begin{figure}[H]
 \centering
@@ -402,6 +402,7 @@ Todos los experimentos fueron llevados a cabo con CUDA 12.1 en una GPU Nvidia 20
 
 En \ref{tabla1} se resumen los principales resultados de los experimentos realizados. Se indica la precisión obtenida (y su error como contraparte) junto con aquella reportada en el paper. Para que los números reportados sean más correctos, se podría haber tomado el promedio y desviación estándar de varias ejecuciones, pero por motivos de tiempo disponible, no fue posible. Se indica la diferencia entre los errores obtenidos y los reportados en el paper.
 
+Vale aclarar que se usan ``MResNet'' y ``LMResNet'' intercambiablemente, el primero con base en el nombre dado en el código. Por otro lado, vemos la nomenclatura \texttt{LMResNet-X}, donde X indica la cantidad de capas convolucionales que tiene esa versión de la red.
 
 % Please add the following required packages to your document preamble:
 % \usepackage[table,xcdraw]{xcolor}
@@ -412,12 +413,12 @@ En \ref{tabla1} se resumen los principales resultados de los experimentos realiz
 \cline{2-8}
  & \multicolumn{2}{c|}{\textbf{Replicación}} & \multicolumn{2}{c|}{\textbf{Paper}} &  &  &  \\ \cline{2-8}
  & \multicolumn{1}{c}{\textbf{Acc.}} & \multicolumn{1}{c|}{\textbf{Error (\%)}} & \multicolumn{1}{c}{\textbf{Acc.}} & \multicolumn{1}{c|}{\textbf{Error (\%)}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Diferencia\\ de error\end{tabular}}} & \multicolumn{1}{l|}{\textbf{\begin{tabular}[c]{@{}l@{}}Parametros\\ entrenables\end{tabular}}} & \textbf{\begin{tabular}[c]{@{}l@{}}Mult-Add\\ totales (G)\end{tabular}} \\ \hline
-\multicolumn{1}{|l|}{\textbf{MResNet-20}} & 0.9200 & 8.00 & 0.9167 & 8.33 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}+0.33} & \multicolumn{1}{l|}{273475} & 5.22 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-32}} & 0.9204 & 7.96 & 0.9282 & 7.18 & \multicolumn{1}{l|}{\cellcolor[HTML]{FF6961}-0.78} & \multicolumn{1}{l|}{467913} & 8.85 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-44}} & 0.9279 & 7.21 & 0.9334 & 6.66 & \multicolumn{1}{l|}{\cellcolor[HTML]{FE996B}-0.55} & \multicolumn{1}{l|}{662351} & 12.47 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-56}} & 0.9315 & 6.85 & 0.9369 & 6.31 & \multicolumn{1}{l|}{\cellcolor[HTML]{FE996B}-0.54} & \multicolumn{1}{l|}{856789} & 16.10 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-110}} & 0.9357 & 6.43 & 0.9384 & 6.16 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.27} & \multicolumn{1}{l|}{1731760} & 32.40 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-164}} & 0.9439 & 5.61 & 0.9473 & 5.27 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.34} & \multicolumn{1}{l|}{1703760} & 31.70 \\ \hline
+\multicolumn{1}{|l|}{\textbf{LMResNet-20}} & 0.9200 & 8.00 & 0.9167 & 8.33 & \multicolumn{1}{l|}{\cellcolor[HTML]{77DD77}+0.33} & \multicolumn{1}{l|}{273475} & 5.22 \\
+\multicolumn{1}{|l|}{\textbf{LMResNet-32}} & 0.9204 & 7.96 & 0.9282 & 7.18 & \multicolumn{1}{l|}{\cellcolor[HTML]{FF6961}-0.78} & \multicolumn{1}{l|}{467913} & 8.85 \\
+\multicolumn{1}{|l|}{\textbf{LMResNet-44}} & 0.9279 & 7.21 & 0.9334 & 6.66 & \multicolumn{1}{l|}{\cellcolor[HTML]{FE996B}-0.55} & \multicolumn{1}{l|}{662351} & 12.47 \\
+\multicolumn{1}{|l|}{\textbf{LMResNet-56}} & 0.9315 & 6.85 & 0.9369 & 6.31 & \multicolumn{1}{l|}{\cellcolor[HTML]{FE996B}-0.54} & \multicolumn{1}{l|}{856789} & 16.10 \\
+\multicolumn{1}{|l|}{\textbf{LMResNet-110}} & 0.9357 & 6.43 & 0.9384 & 6.16 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.27} & \multicolumn{1}{l|}{1731760} & 32.40 \\
+\multicolumn{1}{|l|}{\textbf{LMResNet-164}} & 0.9439 & 5.61 & 0.9473 & 5.27 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.34} & \multicolumn{1}{l|}{1703760} & 31.70 \\ \hline
 \end{tabular}
 \end{adjustbox}
 \caption{Tabla de resumen de resultados obtenidos.}
@@ -451,7 +452,9 @@ En \ref{test_set_acc} se muestra la curva de precisión sobre el set de test par
 \label{train_loss_log}
 \end{figure}
 
-En \ref{momentum} y \ref{momentum_large} se ven los valores aprendidos por los parámetros $k_n$, los momentos de cada una de las capas residuales. Este punto es donde mayor discrepancias se encuentran respecto del paper original. En primer instancia, el paper proclama que estos valores se inicializan $\sim \mathscr{U}(-0.1, 0)$, sin embargo en el código original~\footnote{\url{https://github.com/2prime/LM-ResNet/blob/ff49654a50abd76f9fd40342a6d7b82e3ff11c31/MResNet.py\#L139}} los valores se inicializan en $\mathscr{U}(1.0, 1.1)$. Tal como se hizo antes, se toma lo explicado en el paper como verdad, y se modifica el código acorde. Notemos que esto, sin embargo, hace que ambas discrepancias tomen sentido: $1 - \mathscr{U}(1.0, 1.1) \sim \mathscr{U}(-0.1, 0.0)$. Sin embargo, por claridad, se prefiere dejar el código corregido para cumplir con lo descrito explícitamente. En segunda instancia, los momentos reportados en el paper decaen conforme se avanza por la red y se distribuyen en $\left[-2.0, 1.0\right]$. En los experimentos de replicación, vemos que los valores se mantienen en $\left[-0.1, 0.0\right]$. Aún luego de varias revisiones, no se evidencia un error en el código por el cual estos valores no se modifiquen con el tiempo.
+En \ref{momentum} y \ref{momentum_large} se ven los valores aprendidos por los parámetros $k_n$, los momentos de cada una de las capas residuales. Este punto es donde mayor discrepancias se encuentran respecto del paper original. En primer instancia, el paper proclama que estos valores se inicializan $\sim \mathscr{U}(-0.1, 0)$, sin embargo en el código original~\footnote{\url{https://github.com/2prime/LM-ResNet/blob/ff49654a50abd76f9fd40342a6d7b82e3ff11c31/MResNet.py\#L139}} los valores se inicializan en $\mathscr{U}(1.0, 1.1)$. Tal como se hizo antes, se toma lo explicado en el paper como verdad, y se modifica el código acorde. Notemos que esto, sin embargo, hace que ambas discrepancias tomen sentido: $1 - \mathscr{U}(1.0, 1.1) \sim \mathscr{U}(-0.1, 0.0)$. Sin embargo, por claridad, se prefiere dejar el código corregido para cumplir con lo descrito explícitamente. Luego, se observa algo que los autores notan: que los momentos aprendidos decaen rápidamente hacia el final de la red. La figura obtenida no tiene una caída tan suave como la reportada en el paper, sin embargo se cumple tanto para las redes más chicas como las redes más grandes. Los momentos reportados en el paper se distribuyen en $\left[-2.0, 1.0\right]$. En los experimentos de replicación, vemos que los valores se mantienen en $\left[-2.5, 1.0\right]$, lo cual parece bastante cercano.
+
+Pensemos en qué implica un valor negativo para $k_n$. Revisando \ref{LM_arch}, vemos que se le está dando un valor positivo alto al residual actual y se le está dando un valor negativo al residual anterior. Podríamos justificarlo pensando que la información provista por el último punto da mucha más información que un punto anterior.
 
 \begin{figure}[H]
 \centering
@@ -471,13 +474,13 @@ En \ref{momentum} y \ref{momentum_large} se ven los valores aprendidos por los p
 En \cite{huang2016deep}, se propone, aleatoriamente eliminar un subset de capas y reemplazarlas por la función identidad. Se inicia con una red extremadamente profunda (incluso más de 1200 capas) para luego ir eliminando algunas durante cada epoch de entrenamiento. Por otro lado, \cite{gastaldi2017shakeshake} propone utilizar regularización shake-shake para mejorar los resultados de una red con múltiples ramas (como LM-Resnet), reemplazando la operación de suma como unión de ramas por una operación afín estocástica.
 
 \subsection{Sistema dinámico de una regularización Shake-Shake}
-Tal como se adelantó, en \cite{gastaldi2017shakeshake} se propone la siguiente combinación afin estocástica:
+Tal como se adelantó, en \cite{gastaldi2017shakeshake} se propone la siguiente combinación afín estocástica:
 
 \begin{align}
 	X_{n+1} = X_n + \eta f_1(X_n) + (1-\eta) f_2 (X_n)
 \end{align}
 
-Como operador de unión de múltiples componentes de un bloque residual. $\eta \sim \mathscr{U}(0,1)$. Introduciendo un paso temporal $\Delta t$ encontramos su sistema dinamico estocástico asociado:
+Como operador de unión de múltiples componentes de un bloque residual. $\eta \sim \mathscr{U}(0,1)$. Introduciendo un paso temporal $\Delta t$ encontramos su sistema dinámico estocástico asociado:
 
 \begin{align}\label{shakeshake_step}
 	X_{n+1} = X_n + \left(\dfrac{\Delta t}{2} + \sqrt{\Delta t}(\eta - \dfrac{1}{2})\right) f_1(X_n) + \left( \dfrac{\Delta t}{2} + \sqrt{\Delta t} (\dfrac{1}{2} - \eta) \right) f_2(X_n)
@@ -518,7 +521,7 @@ Donde $\mathbb{P}(\eta_n = 1) = p_n, \mathbb{P}(\eta_n = 0) = 1 - p_n$. Lo cual 
 
 \subsection{Resultados experimentales}
 \subsubsection{Hiperparámetros}
-El dataset se trata del mismo modo que para experimentos anteriores. En este caso, la probabilidad de eliminar un bloque residual en cada capa es un funcion lineal de la capa. Siendo $l$ la capa bajo consideración, la probabilidad de eliminar un bloque residual es $\dfrac{l}{L}(1 - p_L)$, donde $L$ refiere a la profundidad de la red y $p_L$ es la probabilidad asociada a la capa anterior a $l$.
+El dataset se trata del mismo modo que para experimentos anteriores. En este caso, la probabilidad de eliminar un bloque residual en cada capa es un función lineal de la capa. Siendo $l$ la capa bajo consideración, la probabilidad de eliminar un bloque residual es $\dfrac{l}{L}(1 - p_L)$, donde $L$ refiere a la profundidad de la red y $p_L$ es la probabilidad asociada a la capa anterior a $l$.
 
 Para LM-ResNet56 se selecciona $p_L = 0.8$ y para LM-ResNet110 se selecciona $p_L = 0.5$. Se entrena utilizando descenso estocástico por gradiente con decaimiento de peso de 0.0001 y momento de 0.9. El factor de aprendizaje arranca en 0.1, pasa a ser 0.01 luego del epoch 250 y 0.001 luego del epoch 375. El entrenamiento termina a los 500 epochs.
 
@@ -526,7 +529,7 @@ Para LM-ResNet56 se selecciona $p_L = 0.8$ y para LM-ResNet110 se selecciona $p_
 
 En \ref{tabla2} se resumen los principales resultados de los experimentos de entrenamiento estocástico. Estos experimentos, considerando que tienen un costo computacional más alto y entrenan por 3 veces más epochs que las anteriores pruebas, tardan mas que las pruebas para los 6 modelos sin entrenamiento estocástico. Se utiliza regularización dropout acorde a las pruebas reportadas en el paper. Se implementa la regularización shake-shake mediante la suma de ruido uniforme a la salida de cada bloque residual. Sin embargo, al no tener un valor de referencia en el paper, no se ejecutaron las pruebas.
 
-Vemos que los valores de precisión obtenidos se corresponden con los reportados, dentro de márgenes de error aceptables para ambas configuraciones de la arquitectura LM-ResNet. Resulta destacable que LM-ResNet56 con entrenamiento estocástico tiene un error menor que LM-ResNet110 y LM-ResNet164 sin entrenamiento estocástico, y con la mitad de parámetros. LM-ResNet110 con entrenamiento estocástico logra una mejora de 6.8\% error relativo respecto de LM-ResNet164 sin entrenamiento estocástico y \textbf{20\%} respecto de LM-ResNet110 sin entrenamiento estocástico.
+Vemos que los valores de precisión obtenidos se corresponden con los reportados, dentro de márgenes de error aceptables para ambas configuraciones de la arquitectura LM-ResNet. Resulta destacable que LM-ResNet56 con entrenamiento estocástico tiene un error menor que LM-ResNet110 y LM-ResNet164 sin entrenamiento estocástico, y con la mitad de parámetros. LM-ResNet110 con entrenamiento estocástico logra una mejora de 13.01\% error relativo respecto de LM-ResNet164 sin entrenamiento estocástico y \textbf{24.10\%} respecto de LM-ResNet110 sin entrenamiento estocástico.
 
 % Please add the following required packages to your document preamble:
 % \usepackage[table,xcdraw]{xcolor}
@@ -537,8 +540,8 @@ Vemos que los valores de precisión obtenidos se corresponden con los reportados
 \cline{2-8}
  & \multicolumn{2}{c|}{\textbf{Replicación}} & \multicolumn{2}{c|}{\textbf{Paper}} &  &  &  \\ \cline{2-8}
  & \multicolumn{1}{c}{\textbf{Acc.}} & \multicolumn{1}{c|}{\textbf{Error (\%)}} & \multicolumn{1}{c}{\textbf{Acc.}} & \multicolumn{1}{c|}{\textbf{Error}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Diferencia\\ de error\end{tabular}}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Parámetros\\ entrenables\end{tabular}}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Mult-Add\\ totales (G)\end{tabular}}} \\ \hline
-\multicolumn{1}{|l|}{\textbf{MResNet-56}} & 0.9484 & 5.16 & 0.9486 & 5.14 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFFFC7}-0.02} & \multicolumn{1}{l|}{856789} & 16.10 \\
-\multicolumn{1}{|l|}{\textbf{MResNet-110}} & 0.9509 & 4.91 & 0.9520 & 4.80 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFCE93}-0.11} & \multicolumn{1}{l|}{1731760} & 32.40 \\ \hline
+\multicolumn{1}{|l|}{\textbf{LMResNet-56}} & 0.9440 & 5.60 & 0.9486 & 5.14 & \multicolumn{1}{l|}{\cellcolor[HTML]{FE996B}-0.46} & \multicolumn{1}{l|}{856789} & 16.10 \\
+\multicolumn{1}{|l|}{\textbf{LMResNet-110}} & 0.9512 & 4.88 & 0.9520 & 4.80 & \multicolumn{1}{l|}{\cellcolor[HTML]{FFCE93}-0.08} & \multicolumn{1}{l|}{1731760} & 32.40 \\ \hline
 \end{tabular}
 \end{adjustbox}
 \caption{Tabla de resumen de resultados obtenidos para entrenamiento estocástico.}
@@ -568,7 +571,7 @@ En \ref{sd_test_set_acc} se muestra la curva de precisión sobre el set de test 
 \label{train_loss_log_sd}
 \end{figure}
 
-Tal como en experimentos anteriores, en \ref{sd_momentum} se observa que el comportamiento de los valores $k_n$ aprendidos para cada capa residual son aleatorios dentro del rango de inicialización.
+Tal como en experimentos anteriores, en \ref{sd_momentum} se observa que el comportamiento de los valores $k_n$ aprendidos para cada capa residual se acelera rápidamente hacia el final de la red.
 
 \begin{figure}[H]
 \centering
@@ -578,17 +581,15 @@ Tal como en experimentos anteriores, en \ref{sd_momentum} se observa que el comp
 \end{figure}
 
 \section{Una nota sobre el método de ecuaciones modificadas}
-La ecuación modificada de un esquema de análisis numérico que aproxima un sistema de ecuaciones por diferencias es otra ecuación diferencial que puede ser mejor aproximado por el esquema numérico. Se utilizan para describir las propiedades de dichos esquemas. La conclusión relevante del paper es que cuando $f$, la función aproximada por el esquema de Euler de primer orden de ResNet, es un flojo de gradientes, la ecuación de diferencias de LM-ResNet tiene una condición de estabilidad $-1 \leq k_n \leq 1$.
+La ecuación modificada de un esquema de análisis numérico que aproxima un sistema de ecuaciones por diferencias es otra ecuación diferencial que puede ser mejor aproximado por el esquema numérico. Se utilizan para describir las propiedades de dichos esquemas. La conclusión relevante del paper es que cuando $f$, la función aproximada por el esquema de Euler de primer orden de ResNet, es un flujo de gradientes, la ecuación de diferencias de LM-ResNet tiene una condición de estabilidad $-1 \leq k_n \leq 1$.
 
 \section{Conclusión}
 En el presente trabajo se explica el paper ``Beyond Finite Layer Neural Networks'', haciendo un repaso del estado del arte previo, su motivación y los temas más relevantes de la literatura relacionada. Se implementan los pipelines de entrenamientos necesarios para replicar los resultados, se reporta la diferencia obtenida respecto de los resultados mencionados en el paper y se hacen notar varios problemas en el paper original y el código.
 
-Una observación que destaca es que los momentos $k_n$ no parecen tener relevancia en el resultado final de la red. Si bien se replican los resultados, no parece que aprender estos valores de escala de cada paso de un método numérico de dos pasos resulte condición necesaria para el resultado final.
-
 Considero que los objetivos del trabajo han sido cumplidos, sin embargo, se abren las puertas a varias líneas de mejora sucesivas.
 
 \subsection{Trabajo futuro propuesto}
-Un camino que no see exploró es el de replicar los resultados para CIFAR100 e ImageNet. Esto se debió a los tiempos de entrenamiento necesarios, pero principalmente debido a que no parecía aportar demasiado respecto de las pruebas realizadas. Se propone también hacer una revisión sobre los valores de $k_n$ para ver si estos están siendo considerados durante la backpropagation de los gradientes.
+Un camino que no se exploró es el de replicar los resultados para CIFAR100 e ImageNet. Esto se debió a los tiempos de entrenamiento necesarios, pero principalmente debido a que no parecía aportar demasiado respecto de las pruebas realizadas. Se propone también hacer una revisión sobre los valores de $k_n$ para ver si estos están siendo considerados durante la backpropagation de los gradientes.
 
 En \href{https://paperswithcode.com/sota/image-classification-on-cifar-10}{la página de SOTA de CIFAR10 de Papers with Code} se ve que desde la publicación del paper objeto de estudio del presente informe, el estado del arte movió el mejor valor reportado de 97.02\% a 99.5\% en 2021. Desde entonces, y hasta la fecha en 2023, no se han reportado mejores resultados.
 
@@ -601,7 +602,7 @@ Hay dos hechos notables que pienso que ofrecen una oportunidad interesante de in
 \label{transformer}
 \end{figure}
 
-En primer lugar, propongo adaptar la arquitectura LM a BiT y evaluar si los resultados obtenidos mejoran respecto de la publicación original. Por otro lado, si observamos en \ref{transformer}, vemos que tanto el encoder como el decoder de la arquitectura de Transformer poseen conexiones residuales, lo cual lleva a pensar que quizás se puedan aplicar los mismos principios aquí estudiados. Sin embargo, resulta más interesante que \cite{lu2019understanding}, con primer autor al mismo autor del paper objecto de estudio del presente informe, estudia a la arquitectura de Transformers como un método de resolucion de EDOs para una ecuación se convección-difusión en un sistema dinámico de múltiples partículas. Propongo evaluar agregar este paper a la lista de papers posibles sobre los cuales realizar una monografía dentro del marco de la materia.
+En primer lugar, propongo adaptar la arquitectura LM a BiT y evaluar si los resultados obtenidos mejoran respecto de la publicación original. Por otro lado, si observamos en \ref{transformer}, vemos que tanto el encoder como el decoder de la arquitectura de Transformer poseen conexiones residuales, lo cual lleva a pensar que quizás se puedan aplicar los mismos principios aquí estudiados. Sin embargo, resulta más interesante que \cite{lu2019understanding}, con primer autor al mismo autor del paper objecto de estudio del presente informe, estudia a la arquitectura de Transformers como un método de resolución de EDOs para una ecuación se convección-difusión en un sistema dinámico de múltiples partículas. Propongo evaluar agregar este paper a la lista de papers posibles sobre los cuales realizar una monografía dentro del marco de la materia.
 
 \newpage
 
